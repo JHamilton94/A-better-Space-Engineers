@@ -2,15 +2,15 @@
 
 1. PVP
 2. No Crashing
-3.  
+3. profit?
 4. Resource Management
 5. Complex missiles
 6. Stargates
 7. Starsystems
 8. Wormholes
-9. 
-10. ~Spreadsheets~
-11. ~TPS reports~
+9. ~~Call it Eve Online ++~~
+10. ~~Spreadsheets~~
+11. ~~TPS reports~~
 12. Drones
 13. Carriers
 14. battleships
