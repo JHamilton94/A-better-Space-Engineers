@@ -8,7 +8,7 @@ public class PlayerMover : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-	    
+        player = GetComponent<PlayerElements>();
 	}
 	
 	// Update is called once per frame
@@ -19,43 +19,37 @@ public class PlayerMover : MonoBehaviour {
     private void movePlayer()
     {
         //Rotate Camera
-        
-
-        //assemble movement vector
-        player.movementVector = new Vector3(player.horizontalAxismagnitude * GlobalVariables.VEL_CONST, player.forwardAxismagnitude * GlobalVariables.VEL_CONST, player.verticalAxisMagnitude * GlobalVariables.VEL_CONST);
-        
+        this.transform.position += player.movementVector;
     }
 
     public void accelerateForward()
     {
-        if (player.forwardAxismagnitude < 1)
-        {
-            player.forwardAxismagnitude += 0.1f;
-        }
+        player.movementVector += this.transform.forward * 0.001f;
     }
 
     public void accelerateBackwards()
     {
-        if (player.forwardAxismagnitude > -1)
-        {
-            player.forwardAxismagnitude -= 0.01f;
-        }
+        player.movementVector -= this.transform.forward * 0.001f;
     }
 
     public void accelerateRight()
     {
-        if (player.horizontalAxismagnitude < 1)
-        {
-            player.horizontalAxismagnitude += 0.1f;
-        }
+        player.movementVector += this.transform.right * 0.001f;
     }
 
     public void accelerateLeft()
     {
-        if (player.horizontalAxismagnitude > -1)
-        {
-            player.horizontalAxismagnitude -= 0.01f;
-        }
+        player.movementVector -= this.transform.right * 0.001f;
+    }
+
+    public void accelerateUp()
+    {
+        player.movementVector += this.transform.up * 0.001f;
+    }
+
+    public void accelerateDown()
+    {
+        player.movementVector -= this.transform.up * 0.001f;
     }
 
 
