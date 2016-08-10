@@ -8,6 +8,7 @@ public class InputInterpreter : MonoBehaviour {
     private float roll;
 
     private PlayerMover mover;
+    private PlayerElements player;
 
 	// Use this for initialization
 	void Start () {
@@ -16,10 +17,11 @@ public class InputInterpreter : MonoBehaviour {
         roll = 0;
 
         mover = GetComponent<PlayerMover>();
+        player = GetComponent<PlayerElements>();
 	}
-	
-	// Update is called once per frame
-	void FixedUpdate () {
+
+    // Update is called once per frame
+    void FixedUpdate() {
         yaw += GlobalVariables.MOUSE_SENSITIVITY * Input.GetAxis("Mouse X");
         pitch += -GlobalVariables.MOUSE_SENSITIVITY * Input.GetAxis("Mouse Y");
         //roll += GlobalVariables.MOUSE_SENSITIVITY * Input.GetAxis("Mouse X");
@@ -32,7 +34,7 @@ public class InputInterpreter : MonoBehaviour {
         {
             mover.accelerateForward();
         }
-        if(Input.GetAxis("Forward") < 0)
+        if (Input.GetAxis("Forward") < 0)
         {
             mover.accelerateBackwards();
         }
@@ -53,6 +55,13 @@ public class InputInterpreter : MonoBehaviour {
         if (Input.GetAxis("Vertical") < 0)
         {
             mover.accelerateDown();
+        }
+
+        if (Input.GetButtonDown("ToggleThrusters"))
+        {
+            Debug.Log("Toggling");
+            player.toggleThrusters();
+            Debug.Log("Done");
         }
 
         //Dampening goes here

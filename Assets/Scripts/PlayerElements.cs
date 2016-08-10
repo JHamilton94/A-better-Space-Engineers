@@ -10,10 +10,15 @@ public class PlayerElements : MonoBehaviour {
     public float playerSpeed;
     public Vector3 movementVector;
 
+    public bool thrustersOn;
+
     //should be private but fuck it
     public float forwardAxismagnitude;
     public float horizontalAxismagnitude;
     public float verticalAxisMagnitude;
 
-    
+    public void toggleThrusters()
+    {
+        thrustersOn = !thrustersOn;
+    }
 }
