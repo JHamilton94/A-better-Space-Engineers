@@ -9,8 +9,10 @@ public class PlayerElements : MonoBehaviour {
     public float maxSpeed;
     public float playerSpeed;
     public Vector3 movementVector;
+    public float thrusterForce;
 
     public bool thrustersOn;
+
 
     //should be private but fuck it
     public float forwardAxismagnitude;

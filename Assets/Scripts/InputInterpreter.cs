@@ -24,38 +24,42 @@ public class InputInterpreter : MonoBehaviour {
     void FixedUpdate() {
         yaw += GlobalVariables.MOUSE_SENSITIVITY * Input.GetAxis("Mouse X");
         pitch += -GlobalVariables.MOUSE_SENSITIVITY * Input.GetAxis("Mouse Y");
-        //roll += GlobalVariables.MOUSE_SENSITIVITY * Input.GetAxis("Mouse X");
+        roll += GlobalVariables.MOUSE_SENSITIVITY * Input.GetAxis("Roll");
+
 
         transform.eulerAngles = new Vector3(pitch, yaw, roll);
 
 
         //Interpret movement
+        Vector3 directionVector = new Vector3(0,0,0);
         if (Input.GetAxis("Forward") > 0)
         {
-            mover.accelerateForward();
+            directionVector += new Vector3(0,0,1);
         }
         if (Input.GetAxis("Forward") < 0)
         {
-            mover.accelerateBackwards();
+            directionVector += new Vector3(0, 0, -1);
         }
 
         if (Input.GetAxis("Horizontal") > 0)
         {
-            mover.accelerateRight();
+            directionVector += new Vector3(1, 0, 0);
         }
         if (Input.GetAxis("Horizontal") < 0)
         {
-            mover.accelerateLeft();
+            directionVector += new Vector3(-1, 0, 0);
         }
 
         if (Input.GetAxis("Vertical") > 0)
         {
-            mover.accelerateUp();
+            directionVector += new Vector3(0, 1, 0);
         }
         if (Input.GetAxis("Vertical") < 0)
         {
-            mover.accelerateDown();
+            directionVector += new Vector3(0, -1, 0);
         }
+
+        mover.accelerate(directionVector);
 
         if (Input.GetButtonDown("ToggleThrusters"))
         {

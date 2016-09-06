@@ -5,6 +5,7 @@ using System.Collections.Generic;
 public class PlayerMover : MonoBehaviour {
 
     private PlayerElements player;
+    private Rigidbody rb;
     private bool gravity;
     private Vector3 forceOfGravity;
 
@@ -13,26 +14,15 @@ public class PlayerMover : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
         player = GetComponent<PlayerElements>();
+        rb = GetComponent<Rigidbody>();
         player.thrustersOn = true;
 	}
 	
 	// Update is called once per frame
 	void FixedUpdate () {
         
-        movePlayer();
     }
-
-    private void movePlayer()
-    {
-
-        if (!player.thrustersOn)
-        {
-            player.movementVector += forceOfGravity;
-        }
-
-        this.transform.position += player.movementVector;
-
-    }
+    
 
     private void OnTriggerEnter(Collider col)
     {
@@ -56,57 +46,15 @@ public class PlayerMover : MonoBehaviour {
         }
     }
 
-    public void accelerateForward()
+    public void accelerate(Vector3 direction)
     {
-        if (player.thrustersOn)
-        {
-            player.movementVector += this.transform.forward * 0.001f;
-        }
-        else if(gravity)
-        {
+        Vector3 horizontalVector = transform.right * direction.x;
+        Vector3 verticalVector = transform.up * direction.y;
+        Vector3 forwardVector = transform.forward * direction.z;
 
-        }
+        player.movementVector = (horizontalVector + verticalVector + forwardVector).normalized;
+        rb.AddForce((horizontalVector + verticalVector + forwardVector) *player.thrusterForce);
 
-    }
-
-    public void accelerateBackwards()
-    {
-        if (player.thrustersOn)
-        {
-            player.movementVector -= this.transform.forward * 0.001f;
-        }
-    }
-
-    public void accelerateRight()
-    {
-        if (player.thrustersOn)
-        {
-            player.movementVector += this.transform.right * 0.001f;
-        }
-    }
-
-    public void accelerateLeft()
-    {
-        if (player.thrustersOn)
-        {
-            player.movementVector -= this.transform.right * 0.001f;
-        }
-    }
-
-    public void accelerateUp()
-    {
-        if (player.thrustersOn)
-        {
-            player.movementVector += this.transform.up * 0.001f;
-        }
-    }
-
-    public void accelerateDown()
-    {
-        if (player.thrustersOn)
-        {
-            player.movementVector -= this.transform.up * 0.001f;
-        }
     }
     
 }
