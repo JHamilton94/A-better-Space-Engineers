@@ -3,8 +3,8 @@ using System.Collections;
 
 public class PlayerElements : MonoBehaviour {
 
-    public float playerWidth;
-    public float playerheight;
+    public float width;
+    public float height;
     public MovementState movementState;
     public float playerAcceleration;
     public float maxSpeed;
@@ -13,6 +13,7 @@ public class PlayerElements : MonoBehaviour {
     public float thrusterForce;
 
     public Vector3 forceOfGravity;
+    public bool grounded;
 
     public bool thrustersOn;
 
