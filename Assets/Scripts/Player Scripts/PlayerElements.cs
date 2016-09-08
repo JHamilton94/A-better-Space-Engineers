@@ -5,11 +5,14 @@ public class PlayerElements : MonoBehaviour {
 
     public float playerWidth;
     public float playerheight;
+    public MovementState movementState;
     public float playerAcceleration;
     public float maxSpeed;
     public float playerSpeed;
     public Vector3 movementVector;
     public float thrusterForce;
+
+    public Vector3 forceOfGravity;
 
     public bool thrustersOn;
 
