@@ -13,6 +13,9 @@ public class PlayerElements : MonoBehaviour {
 
     public bool thrustersOn;
 
+    public float yaw;
+    public float pitch;
+    public float roll;
 
     //should be private but fuck it
     public float forwardAxismagnitude;

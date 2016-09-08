@@ -12,22 +12,23 @@ public class InputInterpreter : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-        yaw = 0;
-        pitch = 0;
-        roll = 0;
-
+        
         mover = GetComponent<PlayerMover>();
         player = GetComponent<PlayerElements>();
-	}
+
+        player.yaw = 0;
+        player.pitch = 0;
+        player.roll = 0;
+    }
 
     // Update is called once per frame
     void FixedUpdate() {
-        yaw += GlobalVariables.MOUSE_SENSITIVITY * Input.GetAxis("Mouse X");
-        pitch += -GlobalVariables.MOUSE_SENSITIVITY * Input.GetAxis("Mouse Y");
-        roll += GlobalVariables.MOUSE_SENSITIVITY * Input.GetAxis("Roll");
+        player.yaw = GlobalVariables.MOUSE_SENSITIVITY * Input.GetAxis("Mouse X");
+        player.pitch = -GlobalVariables.MOUSE_SENSITIVITY * Input.GetAxis("Mouse Y");
+        player.roll = GlobalVariables.MOUSE_SENSITIVITY * Input.GetAxis("Roll");
 
 
-        transform.eulerAngles = new Vector3(pitch, yaw, roll);
+        //transform.eulerAngles = new Vector3(pitch, yaw, roll);
 
 
         //Interpret movement

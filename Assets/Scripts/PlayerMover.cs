@@ -4,12 +4,12 @@ using System.Collections.Generic;
 
 public class PlayerMover : MonoBehaviour {
 
+    //The player mover stores information about movement in the player elements
     private PlayerElements player;
+
     private Rigidbody rb;
     private bool gravity;
     private Vector3 forceOfGravity;
-
-    private List<GameObject> gravGenerators;
 
 	// Use this for initialization
 	void Start () {
@@ -20,7 +20,9 @@ public class PlayerMover : MonoBehaviour {
 	
 	// Update is called once per frame
 	void FixedUpdate () {
-        
+        transform.RotateAround(transform.position, transform.forward, player.roll);
+        transform.RotateAround(transform.position, transform.up, player.yaw);
+        transform.RotateAround(transform.position, transform.right, player.pitch);
     }
     
 
@@ -46,6 +48,10 @@ public class PlayerMover : MonoBehaviour {
         }
     }
 
+    //The accelerate function is used to accelerate the player in any direction
+    //The vector passed in represents the direction that the player is to be accelerated in
+    //X is side to side, Y is up and down, and Z is forward
+    //Right now this is only called by the input manager, but anything that needs to move the player should call this
     public void accelerate(Vector3 direction)
     {
         Vector3 horizontalVector = transform.right * direction.x;
@@ -54,7 +60,8 @@ public class PlayerMover : MonoBehaviour {
 
         player.movementVector = (horizontalVector + verticalVector + forwardVector).normalized;
         rb.AddForce((horizontalVector + verticalVector + forwardVector) *player.thrusterForce);
-
     }
+
+
     
 }
