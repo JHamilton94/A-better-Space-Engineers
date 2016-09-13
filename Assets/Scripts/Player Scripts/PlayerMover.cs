@@ -9,6 +9,7 @@ public class PlayerMover : MonoBehaviour {
 
     private Rigidbody rb;
     private Mesh mesh;
+    private Camera camera;
 
     //Transition states
     private bool rotatingUpright;
@@ -20,7 +21,8 @@ public class PlayerMover : MonoBehaviour {
 
         rb = GetComponent<Rigidbody>();
         mesh = GetComponent<MeshFilter>().mesh;
-        
+        camera = GetComponentInChildren<Camera>();
+
         player.thrustersOn = true;
 
         player.height = mesh.bounds.size.y;
@@ -47,18 +49,32 @@ public class PlayerMover : MonoBehaviour {
         switch (player.movementState)
         {
             case MovementState.Flying: //Orient everything to the camera
-                transform.RotateAround(transform.position, transform.forward, player.roll);
-                transform.RotateAround(transform.position, transform.up, player.yaw);
-                transform.RotateAround(transform.position, transform.right, player.pitch);
+                camera.transform.RotateAround(camera.transform.position, camera.transform.forward, player.roll);
+                camera.transform.RotateAround(camera.transform.position, camera.transform.up, player.yaw);
+                camera.transform.RotateAround(camera.transform.position, camera.transform.right, player.pitch);
+
+                //hacky
+                camera.transform.parent = null;
+                Quaternion desiredRotation = Quaternion.FromToRotation(transform.forward, camera.transform.forward);
+                transform.rotation = Quaternion.RotateTowards(transform.rotation, desiredRotation * transform.rotation, 1);
+                transform.eulerAngles = new Vector3(transform.eulerAngles.x, transform.eulerAngles.y, camera.transform.eulerAngles.z);
+                camera.transform.parent = gameObject.transform;
+
                 break;
             case MovementState.Floating: //Cant orient self without thrusters
                 break;
             case MovementState.Walking://Orient transform to gravity, orient camera roll and yaw to transform, camera pitch is independent
+                //Move Camera freely
+                float pitch = player.pitch + camera.transform.localEulerAngles.x;
+                float yaw = player.yaw + transform.localEulerAngles.y;
+                camera.transform.localEulerAngles = new Vector3(pitch,0,0);
+                transform.localEulerAngles = new Vector3(transform.localEulerAngles.x, yaw, transform.localEulerAngles.z);
+
                 //Orient character to upright
                 Quaternion uprightRotation = Quaternion.FromToRotation(transform.up, -player.forceOfGravity);
-                Quaternion currentRotation = transform.rotation;
                 transform.rotation = Quaternion.RotateTowards(transform.rotation, uprightRotation * transform.rotation, 1);
-                
+
+                //yaw player towards camera
                 
                 
                 break;
@@ -152,6 +168,10 @@ public class PlayerMover : MonoBehaviour {
         Gizmos.DrawLine(transform.position, transform.position + player.forceOfGravity.normalized * (player.height/2 + 1f));
         Gizmos.color = Color.cyan;
         Gizmos.DrawLine(transform.position, transform.position + transform.up.normalized * (player.height/2 + 1));
+
+        Gizmos.color = Color.blue;
+        Gizmos.DrawLine(transform.position, transform.position + transform.forward);
+        Gizmos.DrawLine(transform.position, transform.position + camera.transform.forward);
     }
     
 }
