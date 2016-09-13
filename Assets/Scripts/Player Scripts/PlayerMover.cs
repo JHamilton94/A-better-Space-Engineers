@@ -10,6 +10,8 @@ public class PlayerMover : MonoBehaviour {
     private Rigidbody rb;
     private Mesh mesh;
 
+    //Transition states
+    private bool rotatingUpright;
     private bool clampRoll; //Clamps the roll rotation
 
 	// Use this for initialization
@@ -23,6 +25,7 @@ public class PlayerMover : MonoBehaviour {
 
         player.height = mesh.bounds.size.y;
 
+        rotatingUpright = false;
     }
 	
 	// Update is called once per frame
@@ -51,36 +54,12 @@ public class PlayerMover : MonoBehaviour {
             case MovementState.Floating: //Cant orient self without thrusters
                 break;
             case MovementState.Walking://Orient transform to gravity, orient camera roll and yaw to transform, camera pitch is independent
-                //Roll towards grav vector
-                Vector3 crossProduct = Vector3.Cross(transform.up, player.forceOfGravity);
-                float dot = Vector3.Dot(crossProduct, new Vector3(0,0,1));
-                int sign = 0;
-                if(dot > 0) // rotate left
-                {
-                    sign = -1;
-                }else if (dot < 0) // rotate right
-                {
-                    sign = 1;
-                }
-                else // no rotation
-                {
-                    sign = 0;
-                    Debug.Log("Perfect");
-                }
+                //Orient character to upright
+                Quaternion uprightRotation = Quaternion.FromToRotation(transform.up, -player.forceOfGravity);
+                Quaternion currentRotation = transform.rotation;
+                transform.rotation = Quaternion.RotateTowards(transform.rotation, uprightRotation * transform.rotation, 1);
                 
-                //stop rotation
-                if(Vector3.Angle(transform.up, player.forceOfGravity) < 1)
-                {
-                    player.roll = Vector3.Angle(transform.up, player.forceOfGravity) * sign;
-                }
-                else
-                {
-                    player.roll = 1 * sign;
-                    
-                }
                 
-                //find direction to rotate
-                transform.RotateAround(transform.position, transform.forward, player.roll);
                 
                 break;
         }
@@ -111,11 +90,6 @@ public class PlayerMover : MonoBehaviour {
         
     }
     
-    private void orientPlayer()
-    {
-        
-
-    }
 
     private bool detectGround()
     {
@@ -175,7 +149,9 @@ public class PlayerMover : MonoBehaviour {
     public void OnDrawGizmos()
     {
         Gizmos.color = Color.green;
-        Gizmos.DrawLine(transform.position, transform.position + player.forceOfGravity.normalized * (player.height/2 + 0.1f));
+        Gizmos.DrawLine(transform.position, transform.position + player.forceOfGravity.normalized * (player.height/2 + 1f));
+        Gizmos.color = Color.cyan;
+        Gizmos.DrawLine(transform.position, transform.position + transform.up.normalized * (player.height/2 + 1));
     }
     
 }
