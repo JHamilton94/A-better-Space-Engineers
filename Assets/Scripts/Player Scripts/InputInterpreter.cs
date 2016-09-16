@@ -9,12 +9,14 @@ public class InputInterpreter : MonoBehaviour {
 
     private PlayerMover mover;
     private PlayerElements player;
+    private DebugMenuManager debugMenu;
 
 	// Use this for initialization
 	void Start () {
         
         mover = GetComponent<PlayerMover>();
         player = GetComponent<PlayerElements>();
+        debugMenu = GetComponent<DebugMenuManager>();
 
         player.yaw = 0;
         player.pitch = 0;
@@ -22,7 +24,7 @@ public class InputInterpreter : MonoBehaviour {
     }
 
     // Update is called once per frame
-    void FixedUpdate() {
+    void Update() {
         player.yaw = GlobalVariables.MOUSE_SENSITIVITY * Input.GetAxis("Mouse X");
         player.pitch = -GlobalVariables.MOUSE_SENSITIVITY * Input.GetAxis("Mouse Y");
         player.roll = GlobalVariables.MOUSE_SENSITIVITY * Input.GetAxis("Roll");
@@ -70,6 +72,12 @@ public class InputInterpreter : MonoBehaviour {
         }
 
         //Dampening goes here
+
+        //Debugging menu
+        if (Input.GetButtonDown("OpenDebugMenu"))
+        {
+            debugMenu.toggleMenu();
+        }
     }
 
 }

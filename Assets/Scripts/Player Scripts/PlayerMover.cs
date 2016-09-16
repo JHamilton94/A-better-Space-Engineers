@@ -11,10 +11,6 @@ public class PlayerMover : MonoBehaviour {
     private Mesh mesh;
     private Camera camera;
 
-    //Transition states
-    private bool rotatingUpright;
-    private bool clampRoll; //Clamps the roll rotation
-
 	// Use this for initialization
 	void Start () {
         player = GetComponent<PlayerElements>();
@@ -27,7 +23,6 @@ public class PlayerMover : MonoBehaviour {
 
         player.height = mesh.bounds.size.y;
 
-        rotatingUpright = false;
     }
 	
 	// Update is called once per frame
@@ -46,37 +41,17 @@ public class PlayerMover : MonoBehaviour {
         }
 
         //Orient Player
+        
         switch (player.movementState)
         {
-            case MovementState.Flying: //Orient everything to the camera
-                camera.transform.RotateAround(camera.transform.position, camera.transform.forward, player.roll);
-                camera.transform.RotateAround(camera.transform.position, camera.transform.up, player.yaw);
-                camera.transform.RotateAround(camera.transform.position, camera.transform.right, player.pitch);
-
-                //hacky
-                camera.transform.parent = null;
-                Quaternion desiredRotation = Quaternion.FromToRotation(transform.forward, camera.transform.forward);
-                transform.rotation = Quaternion.RotateTowards(transform.rotation, desiredRotation * transform.rotation, 1);
-                transform.eulerAngles = new Vector3(transform.eulerAngles.x, transform.eulerAngles.y, camera.transform.eulerAngles.z);
-                camera.transform.parent = gameObject.transform;
-
+            case MovementState.Flying:
+                orientFlyingPlayer();
                 break;
-            case MovementState.Floating: //Cant orient self without thrusters
+            case MovementState.Floating:
+                orientFloatingPlayer();
                 break;
-            case MovementState.Walking://Orient transform to gravity, orient camera roll and yaw to transform, camera pitch is independent
-                //Move Camera freely
-                float pitch = player.pitch + camera.transform.localEulerAngles.x;
-                float yaw = player.yaw + transform.localEulerAngles.y;
-                camera.transform.localEulerAngles = new Vector3(pitch,0,0);
-                transform.localEulerAngles = new Vector3(transform.localEulerAngles.x, yaw, transform.localEulerAngles.z);
-
-                //Orient character to upright
-                Quaternion uprightRotation = Quaternion.FromToRotation(transform.up, -player.forceOfGravity);
-                transform.rotation = Quaternion.RotateTowards(transform.rotation, uprightRotation * transform.rotation, 1);
-
-                //yaw player towards camera
-                
-                
+            case MovementState.Walking:
+                orientWalkingPlayer();
                 break;
         }
         
@@ -93,29 +68,84 @@ public class PlayerMover : MonoBehaviour {
                 player.grounded = false;
                 break;
             case MovementState.Walking:
-                player.grounded = detectGround();
-                if (!player.grounded)
-                {
-                    applyGravity();
-                }
+                applyGravity();
                 break;
         }
-
-        player.grounded = detectGround();
-
         
     }
     
-
-    private bool detectGround()
+    private void orientFlyingPlayer()
     {
-        Physics.Raycast(transform.position, player.forceOfGravity, player.height/2 + 0.1f);
-        return true;
+        Quaternion desiredRotation;
+        camera.transform.RotateAround(camera.transform.position, camera.transform.forward, player.roll);
+        camera.transform.RotateAround(camera.transform.position, camera.transform.right, player.pitch);
+        camera.transform.RotateAround(camera.transform.position, camera.transform.up, player.yaw);
+
+
+        //hacky 
+        camera.transform.parent = null;
+
+        //Prevent the body from snapping to a rotation, and allows a more gradual transition to flying
+        desiredRotation = Quaternion.FromToRotation(transform.forward, camera.transform.forward);
+        transform.rotation = Quaternion.RotateTowards(transform.rotation, desiredRotation * transform.rotation, player.reactionWheelTorque);
+        transform.eulerAngles = new Vector3(transform.eulerAngles.x, transform.eulerAngles.y, camera.transform.eulerAngles.z);
+
+        camera.transform.parent = gameObject.transform;
+        //end of hack
+    }
+
+    private void orientWalkingPlayer()
+    {
+        Quaternion desiredRotation;
+        //Move Camera freely
+        float pitch = player.pitch + camera.transform.localEulerAngles.x;
+        float yaw = player.yaw + transform.localEulerAngles.y;
+        camera.transform.localEulerAngles = new Vector3(pitch, 0, 0);
+        transform.localEulerAngles = new Vector3(transform.localEulerAngles.x, yaw, transform.localEulerAngles.z);
+
+        //Orient character to upright
+        desiredRotation = Quaternion.FromToRotation(transform.up, -player.forceOfGravity);
+        transform.rotation = Quaternion.RotateTowards(transform.rotation, desiredRotation * transform.rotation, player.reactionWheelTorque);
+        
+    }
+
+    private void orientFloatingPlayer()
+    {
+        Quaternion desiredRotation;
+        camera.transform.RotateAround(camera.transform.position, camera.transform.forward, player.roll);
+        camera.transform.RotateAround(camera.transform.position, camera.transform.up, player.yaw);
+        camera.transform.RotateAround(camera.transform.position, camera.transform.right, player.pitch);
+
+        //hacky
+        camera.transform.parent = null;
+        desiredRotation = Quaternion.FromToRotation(transform.forward, camera.transform.forward);
+        transform.rotation = Quaternion.RotateTowards(transform.rotation, desiredRotation * transform.rotation, player.reactionWheelTorque);
+        transform.eulerAngles = new Vector3(transform.eulerAngles.x, transform.eulerAngles.y, camera.transform.eulerAngles.z);
+        camera.transform.parent = gameObject.transform;
+        //end of hack
+    }
+
+    private RaycastHit detectGround()
+    {
+        Ray groundCheck = new Ray(transform.position, player.forceOfGravity.normalized);
+        RaycastHit hitInformation;
+        Physics.Raycast(groundCheck, out hitInformation, player.height/2 + 0.1f);
+        return hitInformation;
     }
 
     private void applyGravity()
     {
-
+        
+        RaycastHit grounded = detectGround();
+        Debug.Log(grounded);
+        if (grounded.collider == null)
+        {
+            rb.AddForce(player.forceOfGravity, ForceMode.Impulse);
+        }
+        else
+        {
+            //set position to just above the ground
+        }
     }
 
     private void OnTriggerEnter(Collider col)
@@ -162,16 +192,18 @@ public class PlayerMover : MonoBehaviour {
         
     }
 
+
+
     public void OnDrawGizmos()
     {
-        Gizmos.color = Color.green;
+        /*Gizmos.color = Color.green;
         Gizmos.DrawLine(transform.position, transform.position + player.forceOfGravity.normalized * (player.height/2 + 1f));
         Gizmos.color = Color.cyan;
         Gizmos.DrawLine(transform.position, transform.position + transform.up.normalized * (player.height/2 + 1));
 
         Gizmos.color = Color.blue;
         Gizmos.DrawLine(transform.position, transform.position + transform.forward);
-        Gizmos.DrawLine(transform.position, transform.position + camera.transform.forward);
+        Gizmos.DrawLine(transform.position, transform.position + camera.transform.forward);*/
     }
     
 }

@@ -3,20 +3,23 @@ using System.Collections;
 
 public class PlayerElements : MonoBehaviour {
 
+    //Player info
     public float width;
     public float height;
     public MovementState movementState;
-    public float playerAcceleration;
-    public float maxSpeed;
     public float playerSpeed;
     public Vector3 movementVector;
-    public float thrusterForce;
-
+    
+    //Player Gravity Info
     public Vector3 forceOfGravity;
     public bool grounded;
+    public float reactionWheelTorque;
 
+    //Player systems info
     public bool thrustersOn;
+    public float thrusterForce;
 
+    //Player Orientation
     public float yaw;
     public float pitch;
     public float roll;
@@ -25,6 +28,9 @@ public class PlayerElements : MonoBehaviour {
     public float forwardAxismagnitude;
     public float horizontalAxismagnitude;
     public float verticalAxisMagnitude;
+
+    //Debug states
+    public bool noClip;
 
     public void toggleThrusters()
     {
