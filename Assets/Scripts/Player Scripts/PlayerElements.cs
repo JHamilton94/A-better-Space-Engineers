@@ -15,6 +15,8 @@ public class PlayerElements : MonoBehaviour {
     public Vector3 forceOfGravity;
     public bool grounded;
     public float reactionWheelTorque;
+    public bool triggeredGravGenerator;
+    public Collider gravGeneratorCollider;
 
     //Player systems info
     public bool thrustersOn;

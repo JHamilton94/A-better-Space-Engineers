@@ -28,6 +28,23 @@ public class PlayerMover : MonoBehaviour {
 	// Update is called once per frame
 	void FixedUpdate () {
 
+        if(player.gravGeneratorCollider != null && player.forceOfGravity == new Vector3(0,0,0))
+        {
+            if (player.gravGeneratorCollider.bounds.Contains(transform.position))
+            {
+                player.forceOfGravity = player.gravGeneratorCollider.gameObject.GetComponent<GravityGeneratorElements>().forceOfGravity;
+            }
+            else
+            {
+                player.forceOfGravity = new Vector3(0, 0, 0);
+            }
+        }
+        else if (player.gravGeneratorCollider == null)
+        {
+            player.forceOfGravity = new Vector3(0, 0, 0);
+        }
+
+
         //Update movement state
         if (player.thrustersOn)
         {
@@ -116,17 +133,24 @@ public class PlayerMover : MonoBehaviour {
         camera.transform.RotateAround(camera.transform.position, camera.transform.up, player.yaw);
         camera.transform.RotateAround(camera.transform.position, camera.transform.right, player.pitch);
 
-        //hacky
+        //hacky 
         camera.transform.parent = null;
+
+        //Prevent the body from snapping to a rotation, and allows a more gradual transition to flying
         desiredRotation = Quaternion.FromToRotation(transform.forward, camera.transform.forward);
         transform.rotation = Quaternion.RotateTowards(transform.rotation, desiredRotation * transform.rotation, player.reactionWheelTorque);
         transform.eulerAngles = new Vector3(transform.eulerAngles.x, transform.eulerAngles.y, camera.transform.eulerAngles.z);
+
         camera.transform.parent = gameObject.transform;
         //end of hack
     }
 
     private RaycastHit detectGround()
     {
+        if (player.movementState == MovementState.Floating)
+        {
+            return new RaycastHit();
+        }
         Ray groundCheck = new Ray(transform.position, player.forceOfGravity.normalized);
         RaycastHit hitInformation;
         Physics.Raycast(groundCheck, out hitInformation, player.height/2 + 0.1f);
@@ -137,7 +161,6 @@ public class PlayerMover : MonoBehaviour {
     {
         
         RaycastHit grounded = detectGround();
-        Debug.Log(grounded);
         if (grounded.collider == null)
         {
             rb.AddForce(player.forceOfGravity, ForceMode.Impulse);
@@ -145,15 +168,17 @@ public class PlayerMover : MonoBehaviour {
         else
         {
             //set position to just above the ground
+            transform.position = grounded.point + new Vector3(0, (player.height/2) + 0.05f, 0);
         }
     }
 
     private void OnTriggerEnter(Collider col)
     {
         //Gravity Generator
+        Debug.Log(col.bounds.Contains(transform.position));
         if(col.gameObject.tag == "Gravity Generator")
         {
-            player.forceOfGravity = col.gameObject.GetComponent<GravityGeneratorElements>().forceOfGravity;
+            player.gravGeneratorCollider = col;
         }
     }
 
@@ -162,7 +187,7 @@ public class PlayerMover : MonoBehaviour {
         //Gravity Generator
         if (col.gameObject.tag == "Gravity Generator")
         {
-            player.forceOfGravity = new Vector3(0, 0, 0);
+            player.gravGeneratorCollider = null;
         }
     }
 
@@ -192,7 +217,10 @@ public class PlayerMover : MonoBehaviour {
                 forwardVector = Vector3.Cross(player.forceOfGravity, camera.transform.right).normalized * direction.z;
                 horizontalVector = camera.transform.right * direction.x;
                 player.movementVector = forwardVector + horizontalVector;
-                rb.MovePosition(transform.position + (player.movementVector.normalized * player.walkingSpeed));
+                player.movementVector.y = rb.velocity.y;
+
+                rb.velocity = player.movementVector;
+                //rb.MovePosition(transform.position + (player.movementVector.normalized * player.walkingSpeed));
 
                 break;
         }
