@@ -9,6 +9,7 @@ public class PlayerElements : MonoBehaviour {
     public MovementState movementState;
     public float playerSpeed;
     public Vector3 movementVector;
+    public float walkingSpeed;
     
     //Player Gravity Info
     public Vector3 forceOfGravity;

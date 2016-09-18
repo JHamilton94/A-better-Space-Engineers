@@ -172,12 +172,15 @@ public class PlayerMover : MonoBehaviour {
     //Right now this is only called by the input manager, but anything that needs to move the player should call this
     public void accelerate(Vector3 direction)
     {
+        Vector3 horizontalVector;
+        Vector3 verticalVector;
+        Vector3 forwardVector;
         switch (player.movementState)
         {
             case MovementState.Flying:
-                Vector3 horizontalVector = transform.right * direction.x;
-                Vector3 verticalVector = transform.up * direction.y;
-                Vector3 forwardVector = transform.forward * direction.z;
+                horizontalVector = transform.right * direction.x;
+                verticalVector = transform.up * direction.y;
+                forwardVector = transform.forward * direction.z;
 
                 player.movementVector = (horizontalVector + verticalVector + forwardVector).normalized;
                 rb.AddForce((horizontalVector + verticalVector + forwardVector) * player.thrusterForce);
@@ -186,7 +189,11 @@ public class PlayerMover : MonoBehaviour {
                 //do nothing
                 break;
             case MovementState.Walking:
-                //TODO impliment walking
+                forwardVector = Vector3.Cross(player.forceOfGravity, camera.transform.right).normalized * direction.z;
+                horizontalVector = camera.transform.right * direction.x;
+                player.movementVector = forwardVector + horizontalVector;
+                rb.MovePosition(transform.position + (player.movementVector.normalized * player.walkingSpeed));
+
                 break;
         }
         
