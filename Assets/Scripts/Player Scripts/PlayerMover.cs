@@ -215,7 +215,7 @@ public class PlayerMover : MonoBehaviour {
                     forwardVector = Vector3.Cross(player.forceOfGravity, camera.transform.right).normalized * direction.z;
                     horizontalVector = camera.transform.right * direction.x;
                     player.movementVector = forwardVector + horizontalVector;
-                    player.movementVector.y = rb.velocity.y;
+                    //player.movementVector.y = rb.velocity.y;
 
                     rb.velocity = player.movementVector;
                 }
