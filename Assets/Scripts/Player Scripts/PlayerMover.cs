@@ -115,11 +115,12 @@ public class PlayerMover : MonoBehaviour {
     {
         Quaternion desiredRotation;
         //Move Camera freely
-        float pitch = player.pitch + camera.transform.localEulerAngles.x;
-        float yaw = player.yaw + transform.localEulerAngles.y;
-        camera.transform.localEulerAngles = new Vector3(pitch, 0, 0);
-        transform.localEulerAngles = new Vector3(transform.localEulerAngles.x, yaw, transform.localEulerAngles.z);
 
+        
+        camera.transform.RotateAround(camera.transform.position, -player.forceOfGravity, player.yaw);
+        camera.transform.RotateAround(camera.transform.position, camera.transform.right, player.pitch);
+
+        
         //Orient character to upright
         desiredRotation = Quaternion.FromToRotation(transform.up, -player.forceOfGravity);
         transform.rotation = Quaternion.RotateTowards(transform.rotation, desiredRotation * transform.rotation, player.reactionWheelTorque);
