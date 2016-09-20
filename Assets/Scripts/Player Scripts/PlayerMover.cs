@@ -165,11 +165,6 @@ public class PlayerMover : MonoBehaviour {
         {
             rb.AddForce(player.forceOfGravity, ForceMode.Impulse);
         }
-        else
-        {
-            //set position to just above the ground
-            transform.position = grounded.point + new Vector3(0, (player.height/2) + 0.05f, 0);
-        }
     }
 
     private void OnTriggerEnter(Collider col)
@@ -214,12 +209,17 @@ public class PlayerMover : MonoBehaviour {
                 //do nothing
                 break;
             case MovementState.Walking:
-                forwardVector = Vector3.Cross(player.forceOfGravity, camera.transform.right).normalized * direction.z;
-                horizontalVector = camera.transform.right * direction.x;
-                player.movementVector = forwardVector + horizontalVector;
-                player.movementVector.y = rb.velocity.y;
+                if (detectGround().collider != null)
+                {
+                    forwardVector = Vector3.Cross(player.forceOfGravity, camera.transform.right).normalized * direction.z;
+                    horizontalVector = camera.transform.right * direction.x;
+                    player.movementVector = forwardVector + horizontalVector;
+                    player.movementVector.y = rb.velocity.y;
 
-                rb.velocity = player.movementVector;
+                    rb.velocity = player.movementVector;
+                }
+                
+                
                 //rb.MovePosition(transform.position + (player.movementVector.normalized * player.walkingSpeed));
 
                 break;
