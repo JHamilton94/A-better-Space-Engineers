@@ -1,7 +1,9 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.Networking;
 
-public class InputInterpreter : MonoBehaviour {
+
+public class InputInterpreter : NetworkBehaviour {
 
     private float yaw;
     private float pitch;
@@ -13,7 +15,12 @@ public class InputInterpreter : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-        
+
+        if (!isLocalPlayer)
+        {
+            return;
+        }
+
         mover = GetComponent<PlayerMover>();
         player = GetComponent<PlayerElements>();
         debugMenu = GetComponent<DebugMenuManager>();
@@ -25,6 +32,12 @@ public class InputInterpreter : MonoBehaviour {
 
     // Update is called once per frame
     void Update() {
+
+        if (!isLocalPlayer)
+        {
+            return;
+        }
+
         player.yaw = GlobalVariables.MOUSE_SENSITIVITY * Input.GetAxis("Mouse X");
         player.pitch = -GlobalVariables.MOUSE_SENSITIVITY * Input.GetAxis("Mouse Y");
         player.roll = GlobalVariables.MOUSE_SENSITIVITY * Input.GetAxis("Roll");
