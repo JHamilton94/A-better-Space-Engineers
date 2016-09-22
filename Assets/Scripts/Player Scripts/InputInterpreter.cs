@@ -13,11 +13,16 @@ public class InputInterpreter : NetworkBehaviour {
     private PlayerElements player;
     private DebugMenuManager debugMenu;
 
+    private Camera camera;
+
 	// Use this for initialization
 	void Start () {
 
+        //Networking player setup
+        camera = GetComponentInChildren<Camera>();
         if (!isLocalPlayer)
         {
+            camera.enabled = false;
             return;
         }
 
