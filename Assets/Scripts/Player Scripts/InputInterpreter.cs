@@ -91,11 +91,23 @@ public class InputInterpreter : NetworkBehaviour {
 
         //Dampening goes here
 
+        //Interpret Shooting
+        if (Input.GetButton("fire1"))
+        {
+            shoot();
+        }
+
+
         //Debugging menu
         if (Input.GetButtonDown("OpenDebugMenu"))
         {
             debugMenu.toggleMenu();
         }
+    }
+
+    public void shoot()
+    {
+
     }
 
 }

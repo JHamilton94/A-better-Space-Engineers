@@ -14,16 +14,16 @@ Platform assembly: C:\Users\Josh\Documents\A-better-Space-Engineers\My Game_Data
 Loading C:\Users\Josh\Documents\A-better-Space-Engineers\My Game_Data\Managed\UnityEngine.UI.dll into Unity Child Domain
 Platform assembly: C:\Users\Josh\Documents\A-better-Space-Engineers\My Game_Data\Managed\UnityEngine.Networking.dll (this message is harmless)
 Loading C:\Users\Josh\Documents\A-better-Space-Engineers\My Game_Data\Managed\UnityEngine.Networking.dll into Unity Child Domain
-- Completed reload, in  0.391 seconds
+- Completed reload, in  0.178 seconds
 Platform assembly: C:\Users\Josh\Documents\A-better-Space-Engineers\My Game_Data\Managed\System.Core.dll (this message is harmless)
 Platform assembly: C:\Users\Josh\Documents\A-better-Space-Engineers\My Game_Data\Managed\System.dll (this message is harmless)
 desktop: 1920x1080 60Hz; virtual: 2944x1080 at 0,0
 <RI> Initializing input.
 <RI> Input initialized.
 <RI> Initialized touch support.
-UnloadTime: 0.841866 ms
+UnloadTime: 0.807155 ms
 Setting up 1 worker threads for Enlighten.
-  Thread -> id: 5774 -> priority: 1 
+  Thread -> id: 778c -> priority: 1 
 True
  
 (Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/UnityEngineDebugBindings.gen.cpp Line: 37)
@@ -32,8 +32,3 @@ True
  
 (Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/UnityEngineDebugBindings.gen.cpp Line: 37)
 
-False
- 
-(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/UnityEngineDebugBindings.gen.cpp Line: 37)
-
-Log: connection {1} has been disconnected by timeout; address {::ffff:127.0.0.1:7777}
