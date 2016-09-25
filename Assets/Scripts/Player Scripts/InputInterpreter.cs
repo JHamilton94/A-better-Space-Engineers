@@ -11,6 +11,7 @@ public class InputInterpreter : NetworkBehaviour {
 
     private PlayerMover mover;
     private PlayerElements player;
+    private PlayerSettings settings;
     private DebugMenuManager debugMenu;
 
     private Camera camera;
@@ -28,6 +29,7 @@ public class InputInterpreter : NetworkBehaviour {
 
         mover = GetComponent<PlayerMover>();
         player = GetComponent<PlayerElements>();
+        settings = GetComponent<PlayerSettings>();
         debugMenu = GetComponent<DebugMenuManager>();
 
         player.yaw = 0;
@@ -43,9 +45,9 @@ public class InputInterpreter : NetworkBehaviour {
             return;
         }
 
-        player.yaw = GlobalVariables.MOUSE_SENSITIVITY * Input.GetAxis("Mouse X");
-        player.pitch = -GlobalVariables.MOUSE_SENSITIVITY * Input.GetAxis("Mouse Y");
-        player.roll = GlobalVariables.MOUSE_SENSITIVITY * Input.GetAxis("Roll");
+        player.yaw = settings.MOUSE_SENSITIVITY * Input.GetAxis("Mouse X");
+        player.pitch = -settings.MOUSE_SENSITIVITY * Input.GetAxis("Mouse Y");
+        player.roll = settings.MOUSE_SENSITIVITY * Input.GetAxis("Roll");
 
 
         //transform.eulerAngles = new Vector3(pitch, yaw, roll);
@@ -92,7 +94,7 @@ public class InputInterpreter : NetworkBehaviour {
         //Dampening goes here
 
         //Interpret Shooting
-        if (Input.GetButton("fire1"))
+        if (Input.GetButton("Fire1"))
         {
             shoot();
         }
