@@ -8,7 +8,8 @@ using System;
 public class MenuManager : NetworkBehaviour
 {
 
-    public MyNetworkManager networkManager;
+    public CustomNetworkManager networkManager;
+    public WorldSetup worldSetup;
 
     public GameObject mainMenu;
     public GameObject hostMenu;
@@ -21,7 +22,8 @@ public class MenuManager : NetworkBehaviour
 
     public void Start()
     {
-        networkManager = GetComponent<MyNetworkManager>();
+        networkManager = GameObject.FindGameObjectWithTag("Manager").GetComponent<CustomNetworkManager>();
+        worldSetup = GameObject.FindGameObjectWithTag("Manager").GetComponent<WorldSetup>();
         networkManager.offlineScene = "Main Menu";
     }
 
@@ -58,38 +60,28 @@ public class MenuManager : NetworkBehaviour
 
     public void hostScene(int index)
     {
-        WorldVariables.isServer = true;
-        WorldVariables.playerCount = 1;
-        WorldVariables.worldNum = index;
-        WorldVariables.MAX_SPEED = 50;
-
-        //setup server
-        networkManager.onlineScene = "World " + index;
-
-        //start server
-        networkManager.StartHost();
+        worldSetup.setWorldParameters(10.0f);
+        networkManager.HostServer("192.168.0.161", 5000, "World " + index);
     }
 
     public void joinScene()
     {
+        string ip;
         int port;
-
-        //Resolve Port
         if (portField.text != "")
         {
             port = int.Parse(portField.text);
         }
         else
         {
+            //Default port
             port = 5000;
         }
 
-        Debug.Log(ipField.text);
-        
-        networkManager.networkAddress = ipField.text;
-        networkManager.networkPort = port;
-        networkManager.StartClient();
-        
+        //resolves dns to ip
+        ip = Dns.GetHostAddresses(ipField.text)[0].ToString();
+
+        networkManager.JoinServer(ip, port);
     }
     
 }

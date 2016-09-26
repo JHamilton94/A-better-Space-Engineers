@@ -3,7 +3,7 @@ using System.Collections;
 using UnityEngine.Networking;
 using UnityEngine.UI;
 
-public class MyNetworkManager : NetworkManager {
+public class CustomNetworkManager : NetworkManager {
 
     public Text invalidIPError;
 
@@ -26,5 +26,23 @@ public class MyNetworkManager : NetworkManager {
     {
         Debug.Log("Client disconected: " + conn.address);
         base.OnClientDisconnect(conn);
+    }
+
+
+    public void HostServer(string address, int port, string world)
+    {
+        networkAddress = address;
+        networkPort = port;
+        onlineScene = world;
+        
+        StartHost();
+    }
+
+    public void JoinServer(string address, int port)
+    {
+        networkAddress = address;
+        networkPort = port;
+
+        StartClient();
     }
 }
